@@ -29,7 +29,6 @@ class Genio:
             raise Exception("Could not associate \'%s\' with an artist ID" % artist_name)
         return top_hit['id']
 
-
     def get_artist_song_ids(self, artist_id, num_songs=25):
         print('getting song ids')
         r = requests.get(url=self.genius_base_url + 'artists/%s/songs' % artist_id,
@@ -59,31 +58,39 @@ class Genio:
                 self.extract_artists_from_annotation(annotation['body']['dom'], artists_counts)
         return artists_counts # XXX remove this?
 
-
     def extract_artists_from_annotation(self, annotation, artist_counts={}):
         if type(annotation) is not dict or 'tag' not in annotation:
             return
+
         if annotation['tag'] == 'a':
-            self.__extract_all_children(annotation['children'], artist_counts)
-        elif 'children' in annotation:
+            link = annotation['attributes']['href']
+            if link[:26] == "http://genius.com/artists/":
+                artist_name = link[26:].replace('-', ' ')
+                if self.artist_verifier.exists(artist_name):
+                    if artist_name in artist_counts:
+                        artist_counts[artist_name] += 1
+                    else:
+                        artist_counts[artist_name] = 1
+
+        if 'children' in annotation:
             for child in annotation['children']:
                 self.extract_artists_from_annotation(child, artist_counts)
 
-
-    def __extract_all_children(self, link_dom, artist_counts):
-        for doc in link_dom:
-            if type(doc) is dict and 'children' in doc:
-                self.__extract_all_children(doc['children'], artist_counts)
-            elif type(doc) is str \
-                    and doc.strip() is not '' \
-                    and doc[:4] != 'http' \
-                    and self.artist_verifier.exists(doc):
-                if doc in artist_counts:
-                    artist_counts[doc] = artist_counts[doc] + 1
-                else:
-                    artist_counts[doc] = 1
         return artist_counts
 
+    # def __extract_all_children(self, link_dom, artist_counts):
+    #     for doc in link_dom:
+    #         if type(doc) is dict and 'children' in doc:
+    #             self.__extract_all_children(doc['children'], artist_counts)
+    #         elif type(doc) is str \
+    #                 and doc.strip() is not '' \
+    #                 and doc[:4] != 'http' \
+    #                 and self.artist_verifier.exists(doc):
+    #             if doc in artist_counts:
+    #                 artist_counts[doc] = artist_counts[doc] + 1
+    #             else:
+    #                 artist_counts[doc] = 1
+    #     return artist_counts
 
     def find_related_artists(self, artist):
         artist_id = self.get_artist_id(artist)
