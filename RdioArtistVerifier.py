@@ -1,5 +1,5 @@
 import requests
-
+import aiohttp
 
 class RdioArtistVerifier:
 
@@ -33,4 +33,23 @@ class RdioArtistVerifier:
                 return True
         print(artist +' does not exist')
         return False
+
+    async def exists_async(self, artist):
+        print('checking for existence')
+        r = await aiohttp.post('https://services.rdio.com/api/1/',
+                               data={'method': 'search',
+                                     'query': artist,
+                                     'types': 'artist'},
+                               headers={'Content-Type': 'application/x-www-form-urlencoded',
+                                        'Authorization': 'Bearer ' + self.access_token})
+        if r.status != 200:
+            raise Exception("Search for artist failed with error code %i" % r.status_code)
+        result = await r.json()
+        result = result['result']
+        for i in range(min(5, result['number_results'])):
+            if result['results'][i]['name'].lower() == artist.lower():
+                return True
+        print(artist +' does not exist')
+        return False
+
 

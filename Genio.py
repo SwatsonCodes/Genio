@@ -1,4 +1,6 @@
 import requests
+import asyncio
+import aiohttp
 from RdioArtistVerifier import RdioArtistVerifier
 
 
@@ -8,6 +10,7 @@ class Genio:
         self.genius_base_url = "http://api.genius.com/"
         self.auth_header = {"Authorization": "Bearer heOS7t124GoomESzHUywrt7YhAaYYhI7eVygSoULIOhA0QXzc98jIU5hSascfFvm"}
         self.artist_verifier = RdioArtistVerifier()
+        self.artist_counts ={}
 
     # Returns the id associated with the given artist, if it can be found.
     # Unfortunately the Genius API only supports searching for songs, so
@@ -41,24 +44,25 @@ class Genio:
         song_ids = [song['id'] for song in result['response']['songs']]
         return song_ids
 
-    def extract_artists_from_song(self, song_id, num_referents=200, artists_counts={}):
-        print('extracting from song')
-        r = requests.get(url=self.genius_base_url + "referents",
-                         params={'song_id': song_id,
-                                 'per_page': num_referents},
-                         headers=self.auth_header)
-        result = r.json()
+    async def extract_artists_from_song(self, song_id, num_referents=200):
+        r = await aiohttp.get(self.genius_base_url + 'referents',
+                                    params={'song_id': song_id,
+                                   'per_page': num_referents},
+                                    headers=self.auth_header)
+
+        result = await r.json()
         if result['meta']['status'] != 200:
             raise Exception("Failed to fetch song %s with error code %s" % (str(song_id), str(result['meta']['status'])))
         if result['response']['referents'] is []:
-            return artists_counts
-
+            self.artist_counts = {}
+        coros = []
         for referent in result['response']['referents']:
             for annotation in referent['annotations']:
-                self.extract_artists_from_annotation(annotation['body']['dom'], artists_counts)
-        return artists_counts # XXX remove this?
+                coros.append(asyncio.Task(self.extract_artists_from_annotation(annotation['body']['dom'])))
+        await asyncio.gather(*coros)
 
-    def extract_artists_from_annotation(self, annotation, artist_counts={}):
+
+    async def extract_artists_from_annotation(self, annotation):
         if type(annotation) is not dict or 'tag' not in annotation:
             return
 
@@ -66,42 +70,31 @@ class Genio:
             link = annotation['attributes']['href']
             if link[:26] == "http://genius.com/artists/":
                 artist_name = link[26:].replace('-', ' ')
-                if self.artist_verifier.exists(artist_name):
-                    if artist_name in artist_counts:
-                        artist_counts[artist_name] += 1
+                in_rdio = await self.artist_verifier.exists_async(artist_name)
+                if in_rdio:
+                    if artist_name in self.artist_counts:
+                        self.artist_counts[artist_name] += 1
                     else:
-                        artist_counts[artist_name] = 1
+                        self.artist_counts[artist_name] = 1
 
         if 'children' in annotation:
             for child in annotation['children']:
-                self.extract_artists_from_annotation(child, artist_counts)
+               await self.extract_artists_from_annotation(child)
 
-        return artist_counts
-
-    # def __extract_all_children(self, link_dom, artist_counts):
-    #     for doc in link_dom:
-    #         if type(doc) is dict and 'children' in doc:
-    #             self.__extract_all_children(doc['children'], artist_counts)
-    #         elif type(doc) is str \
-    #                 and doc.strip() is not '' \
-    #                 and doc[:4] != 'http' \
-    #                 and self.artist_verifier.exists(doc):
-    #             if doc in artist_counts:
-    #                 artist_counts[doc] = artist_counts[doc] + 1
-    #             else:
-    #                 artist_counts[doc] = 1
-    #     return artist_counts
-
-    def find_related_artists(self, artist):
+    def help_find_related_artists(self, artist):
         artist_id = self.get_artist_id(artist)
         songs = self.get_artist_song_ids(artist_id)
+        coros = []
         for song in songs:
-            related_artist_counts = self.extract_artists_from_song(song)
-        print(related_artist_counts)
-        return related_artist_counts
+            coros.append(asyncio.Task(self.extract_artists_from_song(song)))
+        yield from asyncio.gather(*coros)
+
+    def find_related_artists(self, artist):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.help_find_related_artists(artist))
+        print(self.artist_counts)
+        return self.artist_counts
 
 
 test = Genio()
-test.find_related_artists('Yung Lean')
-
-
+test.find_related_artists('Built to Spill')
