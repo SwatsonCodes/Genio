@@ -14,8 +14,8 @@ class Genio:
 
     # Returns the id associated with the given artist, if it can be found.
     # Unfortunately the Genius API only supports searching for songs, so
-    # the best workaround I can figure is to get the artist ID associated
-    # with the top song result
+    # the best workaround I can figure is to try to find the artist id within
+    # the top 5 song results
     def get_artist_id(self, artist_name):
         print('getting artist id')
         r = requests.get(url=self.genius_base_url + "search",
@@ -25,12 +25,17 @@ class Genio:
         if result['meta']['status'] != 200:
             raise Exception("Artist ID lookup failed with code " + str(result['meta']['status']))
         if result['response']['hits']:
-            top_hit = result['response']['hits'][0]['result']['primary_artist']
+            artist_result =  None
+            for i in range(min(5, len(result['response']['hits']))):
+                cur_artist = result['response']['hits'][i]['result']['primary_artist']
+                if cur_artist['name'].lower() == artist_name.lower():
+                    artist_result = cur_artist
+                    break
         else:
             raise Exception("No results found for artist " + artist_name)
-        if top_hit['name'].lower() != artist_name.lower():
+        if artist_result is None:
             raise Exception("Could not associate \'%s\' with an artist ID" % artist_name)
-        return top_hit['id']
+        return artist_result['id']
 
     def get_artist_song_ids(self, artist_id, num_songs=25):
         print('getting song ids')
@@ -97,4 +102,4 @@ class Genio:
 
 
 test = Genio()
-test.find_related_artists('Built to Spill')
+test.find_related_artists('Majical Cloudz')
