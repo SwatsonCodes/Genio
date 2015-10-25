@@ -86,7 +86,7 @@ class Genio:
             for child in annotation['children']:
                await self.extract_artists_from_annotation(child)
 
-    def help_find_related_artists(self, artist):
+    def __crawl_songs_async(self, artist):
         artist_id = self.get_artist_id(artist)
         songs = self.get_artist_song_ids(artist_id)
         coros = []
@@ -96,10 +96,10 @@ class Genio:
 
     def find_related_artists(self, artist):
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.help_find_related_artists(artist))
+        loop.run_until_complete(self.__crawl_songs_async(artist))
         print(self.artist_counts)
         return self.artist_counts
 
 
-test = Genio()
-test.find_related_artists('Majical Cloudz')
+# test = Genio()
+# test.find_related_artists('Majical Cloudz')
