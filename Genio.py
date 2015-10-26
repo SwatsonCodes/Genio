@@ -1,7 +1,6 @@
 import requests
 import asyncio
 import aiohttp
-import operator
 from RdioArtistVerifier import RdioArtistVerifier
 
 
@@ -11,7 +10,8 @@ class Genio:
         self.genius_base_url = "http://api.genius.com/"
         self.auth_header = {"Authorization": "Bearer heOS7t124GoomESzHUywrt7YhAaYYhI7eVygSoULIOhA0QXzc98jIU5hSascfFvm"}
         self.artist_verifier = RdioArtistVerifier()
-        self.artist_counts ={}
+        self.artist_counts = {}
+        self.artist_name = ""
 
     # Returns the id associated with the given artist, if it can be found.
     # Unfortunately the Genius API only supports searching for songs, so
@@ -36,6 +36,7 @@ class Genio:
             raise Exception("No results found for artist " + artist_name)
         if artist_result is None:
             raise Exception("Could not associate \'%s\' with an artist ID" % artist_name)
+        self.artist_name = artist_name
         return artist_result['id']
 
     def get_artist_song_ids(self, artist_id, num_songs=25):
@@ -76,12 +77,13 @@ class Genio:
             link = annotation['attributes']['href']
             if link[:26] == "http://genius.com/artists/":
                 artist_name = link[26:].replace('-', ' ')
-                in_rdio = await self.artist_verifier.exists_async(artist_name)
-                if in_rdio:
-                    if artist_name in self.artist_counts:
-                        self.artist_counts[artist_name] += 1
-                    else:
-                        self.artist_counts[artist_name] = 1
+                if artist_name.lower() != self.artist_name.lower():
+                    in_rdio = artist_name in self.artist_counts or await self.artist_verifier.exists_async(artist_name)
+                    if in_rdio:
+                        if artist_name in self.artist_counts:
+                            self.artist_counts[artist_name] += 1
+                        else:
+                            self.artist_counts[artist_name] = 1
 
         if 'children' in annotation:
             for child in annotation['children']:
@@ -104,7 +106,7 @@ class Genio:
         related_artists.sort(key=lambda artist_name: self.artist_counts[artist_name], reverse=True)
         radio_keys = self.artist_verifier.get_radio_keys()
         sorted_keys = [radio_keys[r] for r in related_artists]
-        return {'related_artists': related_artists, 'radio_keys': radio_keys}
+        return {'related_artists': related_artists, 'radio_keys': sorted_keys}
 
 
 # test = Genio()
