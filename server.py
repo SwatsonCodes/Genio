@@ -16,7 +16,6 @@ def after_request(response):
 
 class Genio(Resource):
     def get(self):
-        print("here!")
         artist = request.args.get('artist')
         related = genio.find_related_artists(artist)
         print(related)
