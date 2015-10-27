@@ -25,6 +25,7 @@ $(document).ready(function() {
   console.log(artist_names);
   var artist_images = artist_data.artist_images;
   var radio_keys = artist_data.radio_keys;
+  var fragments = artist_data.fragments;
 
   function load_artist(index) {
       var related_artist = document.createElement("LI");
@@ -42,6 +43,10 @@ $(document).ready(function() {
       artist_icon.src = artist_images[index];
       related_artist.appendChild(artist_icon);
       related_artist.appendChild(document.createTextNode(artist_names[index]));
+      var fragment = document.createElement("EM");
+      fragment.appendChild(document.createTextNode(fragments[index]));
+      console.log(fragments[index]);
+      related_artist.appendChild(fragment);
       document.getElementById("artist-list").appendChild(related_artist);
   }
 

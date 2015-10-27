@@ -85,7 +85,7 @@ class Genio:
                             self.artist_counts[artist_name] += 1
                         else:
                             self.artist_counts[artist_name] = 1
-                        self.fragments[artist_name] = fragment
+                        self.fragments[artist_name] = fragment.replace('\n', ' / ')
 
         if 'children' in annotation:
             for child in annotation['children']:
