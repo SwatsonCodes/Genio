@@ -12,6 +12,7 @@ class Genio:
         self.artist_verifier = RdioArtistVerifier()
         self.artist_counts = {}
         self.artist_name = ""
+        self.fragments = {}
 
     # Returns the id associated with the given artist, if it can be found.
     # Unfortunately the Genius API only supports searching for songs, so
@@ -65,11 +66,11 @@ class Genio:
         coros = []
         for referent in result['response']['referents']:
             for annotation in referent['annotations']:
-                coros.append(asyncio.Task(self.extract_artists_from_annotation(annotation['body']['dom'])))
+                coros.append(asyncio.Task(self.extract_artists_from_annotation(annotation['body']['dom'], referent['fragment'])))
         await asyncio.gather(*coros)
 
 
-    async def extract_artists_from_annotation(self, annotation):
+    async def extract_artists_from_annotation(self, annotation, fragment):
         if type(annotation) is not dict or 'tag' not in annotation:
             return
 
@@ -84,10 +85,11 @@ class Genio:
                             self.artist_counts[artist_name] += 1
                         else:
                             self.artist_counts[artist_name] = 1
+                        self.fragments[artist_name] = fragment
 
         if 'children' in annotation:
             for child in annotation['children']:
-               await self.extract_artists_from_annotation(child)
+               await self.extract_artists_from_annotation(child, fragment)
 
     def __crawl_songs_async(self, artist):
         artist_id = self.get_artist_id(artist)
@@ -97,10 +99,15 @@ class Genio:
             coros.append(asyncio.Task(self.extract_artists_from_song(song)))
         yield from asyncio.gather(*coros)
 
-    def find_related_artists(self, artist):
+    def reset(self):
         self.artist_counts = {}
-        self.artist_verifier.clear_radio_keys()
+        self.fragments = {}
+        self.artist_name = ""
         self.artist_verifier.clear_artist_images()
+        self.artist_verifier.clear_radio_keys()
+
+    def find_related_artists(self, artist):
+        self.reset()
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.__crawl_songs_async(artist))
         print(self.artist_counts)
@@ -110,7 +117,8 @@ class Genio:
         sorted_keys = [radio_keys[r] for r in related_artists]
         artist_images = self.artist_verifier.get_artist_images()
         sorted_images = [artist_images[r] for r in related_artists]
-        return {'related_artists': related_artists, 'radio_keys': sorted_keys, 'artist_images': sorted_images}
+        sorted_fragments = [self.fragments[r] for r in related_artists]
+        return {'related_artists': related_artists, 'radio_keys': sorted_keys, 'artist_images': sorted_images, 'fragments': sorted_fragments}
 
 
 # test = Genio()
