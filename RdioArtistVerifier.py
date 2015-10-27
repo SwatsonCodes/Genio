@@ -58,10 +58,16 @@ class RdioArtistVerifier:
                 if gather_radio_keys:
                     self.radio_keys[artist] = cur_result['radioKey'] if 'radioKey' in cur_result else None
                 if gather_images:
-                    self.artist_images[artist] = cur_result['dynamicIcon'] + '&h=50'
+                    self.artist_images[artist] = self.__clean_image_url(cur_result['dynamicIcon'])
                 return True
         print(artist +' does not exist')
         return False
+
+    def __clean_image_url(self, url):
+        url = url[:url.find('boxblur')] + url[url.find('colorize'):]
+        url = url[:url.find('pad')] + url[url.find('overlay'):]
+        url += '&h=50'
+        return url
 
     def get_radio_keys(self):
         return self.radio_keys
