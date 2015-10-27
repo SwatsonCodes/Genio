@@ -43,3 +43,11 @@
   background-color: #ccc;
   border: 1px dotted #ddd;
 }
+
+.list-group {
+  font-size: 18px;
+}
+
+.list-group-item img {
+  padding: 15px;
+}

@@ -98,6 +98,7 @@ class Genio:
         yield from asyncio.gather(*coros)
 
     def find_related_artists(self, artist):
+        self.artist_counts = {}
         self.artist_verifier.clear_radio_keys()
         self.artist_verifier.clear_artist_images()
         loop = asyncio.get_event_loop()
