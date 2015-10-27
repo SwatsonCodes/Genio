@@ -52,7 +52,9 @@
   padding: 15px;
 }
 
-.list-group-item em {
+.list-group-item em{
   font-size: 12px;
   padding: 15px;
+  display: inline-block;
+  text-align: justify;
 }

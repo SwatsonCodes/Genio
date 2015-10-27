@@ -45,7 +45,6 @@ $(document).ready(function() {
       related_artist.appendChild(document.createTextNode(artist_names[index]));
       var fragment = document.createElement("EM");
       fragment.appendChild(document.createTextNode(fragments[index]));
-      console.log(fragments[index]);
       related_artist.appendChild(fragment);
       document.getElementById("artist-list").appendChild(related_artist);
   }
