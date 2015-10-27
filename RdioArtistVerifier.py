@@ -46,9 +46,6 @@ class RdioArtistVerifier:
                                headers={'Content-Type': 'application/x-www-form-urlencoded',
                                         'Authorization': 'Bearer ' + self.access_token})
         if r.status != 200:
-            if r.status == 429: #Wait a tick and try again if we're being too earnest
-                time.sleep(0.1)
-                return self.exists_async(artist)
             raise Exception("Search for artist failed with error code %i" % r.status)
         result = await r.json()
         result = result['result']
