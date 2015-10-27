@@ -7,6 +7,7 @@ class RdioArtistVerifier:
     def __init__(self):
         self.access_token = self.__get_access_token()
         self.radio_keys = {}
+        self.artist_images = {}
 
     def __get_access_token(self):
         client_credentials = 'd2Fnd3JvZmlrZmRiNWpveTYzYjQ1NjZvY2k6QTV6UEJva0ZXSGhzQ3lkRGs5VHhKQQ=='
@@ -36,7 +37,7 @@ class RdioArtistVerifier:
         print(artist +' does not exist')
         return False
 
-    async def exists_async(self, artist, gather_radio_keys=True):
+    async def exists_async(self, artist, gather_radio_keys=True, gather_images=True):
         print('checking for existence')
         r = await aiohttp.post('https://services.rdio.com/api/1/',
                                data={'method': 'search',
@@ -54,7 +55,10 @@ class RdioArtistVerifier:
         for i in range(min(5, result['number_results'])):
             cur_result = result['results'][i]
             if cur_result['name'].lower() == artist.lower():
-                self.radio_keys[artist] = cur_result['radioKey'] if gather_radio_keys and 'radioKey' in cur_result else None
+                if gather_radio_keys:
+                    self.radio_keys[artist] = cur_result['radioKey'] if 'radioKey' in cur_result else None
+                if gather_images:
+                    self.artist_images[artist] = cur_result['dynamicIcon'] + '&h=50'
                 return True
         print(artist +' does not exist')
         return False
@@ -65,6 +69,11 @@ class RdioArtistVerifier:
     def clear_radio_keys(self):
         self.radio_keys = {}
 
+    def get_artist_images(self):
+        return self.artist_images
+
+    def clear_artist_images(self):
+        self.artist_images = {}
 
 
 

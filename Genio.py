@@ -99,6 +99,7 @@ class Genio:
 
     def find_related_artists(self, artist):
         self.artist_verifier.clear_radio_keys()
+        self.artist_verifier.clear_artist_images()
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.__crawl_songs_async(artist))
         print(self.artist_counts)
@@ -106,7 +107,9 @@ class Genio:
         related_artists.sort(key=lambda artist_name: self.artist_counts[artist_name], reverse=True)
         radio_keys = self.artist_verifier.get_radio_keys()
         sorted_keys = [radio_keys[r] for r in related_artists]
-        return {'related_artists': related_artists, 'radio_keys': sorted_keys}
+        artist_images = self.artist_verifier.get_artist_images()
+        sorted_images = [artist_images[r] for r in related_artists]
+        return {'related_artists': related_artists, 'radio_keys': sorted_keys, 'artist_images': sorted_images}
 
 
 # test = Genio()
