@@ -56,7 +56,7 @@ class RdioArtistVerifier:
             cur_result = result['results'][i]
             if cur_result['name'].lower() == artist.lower():
                 if gather_radio_keys:
-                    self.radio_keys[artist] = cur_result['radioKey'] if 'radioKey' in cur_result else None
+                    self.radio_keys[artist] = cur_result['topSongsKey'] if 'topSongsKey' in cur_result else None
                 if gather_images:
                     self.artist_images[artist] = self.__clean_image_url(cur_result['dynamicIcon'])
                 return True
