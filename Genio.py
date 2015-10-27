@@ -10,10 +10,11 @@ class Genio:
         self.genius_base_url = "http://api.genius.com/"
         self.auth_header = {"Authorization": "Bearer heOS7t124GoomESzHUywrt7YhAaYYhI7eVygSoULIOhA0QXzc98jIU5hSascfFvm"}
         self.artist_verifier = RdioArtistVerifier()
+        self.semaphore = asyncio.Semaphore(10)
         self.artist_counts = {}
+        self.not_artists = set()
         self.artist_name = ""
         self.fragments = {}
-        self.semaphore = asyncio.Semaphore(10)
 
     # Returns the id associated with the given artist, if it can be found.
     # Unfortunately the Genius API only supports searching for songs, so
@@ -81,13 +82,16 @@ class Genio:
             if link[:26] == "http://genius.com/artists/":
                 artist_name = link[26:].replace('-', ' ')
                 if artist_name.lower() != self.artist_name.lower():
-                    in_rdio = artist_name in self.artist_counts or await self.artist_verifier.exists_async(artist_name)
+                    in_rdio = artist_name not in self.not_artists and (artist_name in self.artist_counts or await self.artist_verifier.exists_async(artist_name))
                     if in_rdio:
                         if artist_name in self.artist_counts:
                             self.artist_counts[artist_name] += 1
                         else:
                             self.artist_counts[artist_name] = 1
                         self.fragments[artist_name] = fragment.replace('\n', ' / ')
+                    else:
+                        self.not_artists.add(artist_name)
+
 
         if 'children' in annotation:
             for child in annotation['children']:
@@ -97,6 +101,7 @@ class Genio:
         self.artist_counts = {}
         self.fragments = {}
         self.artist_name = ""
+        self.not_artists = set()
         self.artist_verifier.clear_artist_images()
         self.artist_verifier.clear_radio_keys()
 
