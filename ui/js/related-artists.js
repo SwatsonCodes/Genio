@@ -38,6 +38,12 @@ $(document).ready(function() {
         });
       });
 
+  $("#artist_input").keyup(function(event){
+    if(event.keyCode == 13){
+        $("#search_button").click();
+    }
+  });
+
 
   // show target artist name
   document.getElementById('target_artist').insertAdjacentHTML('beforeend', JSON.parse(localStorage.getItem('target_artist')) + ': ');
