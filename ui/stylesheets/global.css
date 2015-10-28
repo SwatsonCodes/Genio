@@ -5,10 +5,14 @@
 
 /* line 6, global.scss */
 .lead {
-  height: 200px;
+  height: 125px;
   background-color: #ddd;
-  color: #666;
-  padding: 30px;
+  color: #000;
+  padding: 10px;
+}
+
+.lead h1{
+  font-size: 40px;
 }
 
 /* line 13, global.scss */
