@@ -19,6 +19,10 @@ $(document).ready(function() {
       1, 1, '9.0.0', 'expressInstall.swf', flashvars, params, attributes);
 
 
+  // show target artist name
+  document.getElementById('target_artist').insertAdjacentHTML('beforeend', JSON.parse(localStorage.getItem('target_artist')) + ': ');
+
+
   // show related artists
   var artist_data = JSON.parse(localStorage.getItem('related_artists')).related_artists; //XXX Fix this weird nesting
   var artist_names = artist_data.related_artists;
@@ -27,8 +31,9 @@ $(document).ready(function() {
   var radio_keys = artist_data.radio_keys;
   var fragments = artist_data.fragments;
 
-  function load_artist(index) {
-      var related_artist = document.createElement("LI");
+  function load_related_artist(index) {
+
+      var related_artist = document.createElement("a");
       related_artist.className = "list-group-item";
       var play_button = document.createElement("BUTTON");
       play_button.className = "btn btn-default"
@@ -51,14 +56,12 @@ $(document).ready(function() {
 
   var num_results = Math.min(artist_names.length, 10);
   for(i=0;i<num_results;i++){
-    load_artist(i)
+    load_related_artist(i)
   }
 
 
   // set up the controls
-  $('#play').click(function() {
-    apiswf.rdio_play($('#play_key').val());
-  });
+  $('#play').click(function() { apiswf.rdio_play(); });
   $('#stop').click(function() { apiswf.rdio_stop(); });
   $('#pause').click(function() { apiswf.rdio_pause(); });
   $('#previous').click(function() { apiswf.rdio_previous(); });

@@ -7,9 +7,9 @@ $(document).ready(function() {
         url: "http://localhost:9090/genio/",
         data: {'artist': artist},
         success: function(data) {
-            console.log(data);
+            localStorage.setItem('target_artist', JSON.stringify(artist));
             localStorage.setItem('related_artists', JSON.stringify(data));
-            window.location.replace("http://localhost:9080/related-artists.html");
+            window.location.href ="http://localhost:9080/related-artists.html";
         },
         error: function(error) {
             console.log(error);
