@@ -55,7 +55,7 @@ class Genio:
         return song_ids
 
     # Get annotations from a given song and extract artists from each annotation
-    def extract_artists_from_song(self, song_id, num_referents=200):
+    def extract_artists_from_song(self, song_id, num_referents=20):
         with (yield from self.semaphore):
             r = yield from aiohttp.get(self.genius_base_url + 'referents',
                                         params={'song_id': song_id,
