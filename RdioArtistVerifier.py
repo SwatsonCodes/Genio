@@ -37,6 +37,7 @@ class RdioArtistVerifier:
         #print(artist +' does not exist')
         return False
 
+    # check if artist exists on Rdio, and optionally collect data about artist
     async def exists_async(self, artist, gather_radio_keys=True, gather_images=True):
         #print('checking for existence')
         r = await aiohttp.post('https://services.rdio.com/api/1/',

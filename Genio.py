@@ -42,7 +42,7 @@ class Genio:
         self.artist_name = artist_name
         return artist_result['id']
 
-    def get_artist_song_ids(self, artist_id, num_songs=25):
+    def get_artist_song_ids(self, artist_id, num_songs=15):
         print('getting song ids')
         r = requests.get(url=self.genius_base_url + 'artists/%s/songs' % artist_id,
                          params={'per_page': num_songs,
@@ -54,6 +54,7 @@ class Genio:
         song_ids = [song['id'] for song in result['response']['songs']]
         return song_ids
 
+    # Get annotations from a given song and extract artists from each annotation
     def extract_artists_from_song(self, song_id, num_referents=200):
         with (yield from self.semaphore):
             r = yield from aiohttp.get(self.genius_base_url + 'referents',
@@ -72,7 +73,7 @@ class Genio:
                     coros.append(asyncio.Task(self.extract_artists_from_annotation(annotation['body']['dom'], referent['fragment'])))
             yield from asyncio.gather(*coros)
 
-
+    # Collect links to artists in annotation, if artist exists on Rdio
     async def extract_artists_from_annotation(self, annotation, fragment):
         if type(annotation) is not dict or 'tag' not in annotation:
             return
@@ -92,11 +93,11 @@ class Genio:
                     else:
                         self.not_artists.add(artist_name)
 
-
         if 'children' in annotation:
             for child in annotation['children']:
                await self.extract_artists_from_annotation(child, fragment)
 
+    # Purge collected data
     def reset(self):
         self.artist_counts = {}
         self.fragments = {}

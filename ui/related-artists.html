@@ -12,60 +12,58 @@
 
 </head>
 <body>
-  <section class="lead">
-    <h1>Genio</h1>
-    <div class="form-inline">
-        <input  id="artist_input" class="form-control" value="Artist name">
-        <button id="search_button" class="btn btn-md btn-primary"><span id="load_animate"></span> Search</button>
-        <div class="hidden-submit"><input type="submit" tabindex="-1"></div>
-   </div>
+<section class="lead">
+  <h1>Genio</h1>
+  <div class="form-inline">
+    <input  id="artist_input" class="form-control" placeholder="Artist name">
+    <button id="search_button" class="btn btn-md btn-primary"><span id="load_animate"></span> Search</button>
+    <div class="hidden-submit"><input type="submit" tabindex="-1"></div>
+  </div>
+</section>
 
-  </section>
+<div class="container">
 
-  <div class="container">
+  <ul id="artist-list" class="list-group">
+    <a id="target_artist" class="list-group-item active">Artists Related to </a>
+  </ul>
 
-
-    <ul id="artist-list" class="list-group">
-      <a id="target_artist" class="list-group-item active">Artists Related to </a>
-    </ul>
-
-    <div id="apiswf"></div>
-      <div class="well" style="overflow: hidden;">
-        <div class="row">
-          <div class="col-md-6"> 
-            <div class="playControls btn-group">
-              <button id="play" class="btn btn-default"><i class="fa fa-play-circle"></i> Play</button>
-              <button id="stop" class="btn btn-default"><i class="fa fa-stop"></i> Stop</button>
-              <button id="pause" class="btn btn-default"><i class="fa fa-pause"></i> Pause</button>
-              <button id="previous" class="btn btn-default"><i class="fa fa-step-backward"></i> Previous</button>
-              <button id="next" class="btn btn-default"><i class="fa fa-step-forward"></i> Next</button>
-            </div>
-          </div>
-          <div class="col-md-6"> 
-            <div id="freq" class="frequency">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-          </div>
+  <div id="apiswf"></div>
+  <div class="well" style="overflow: hidden;">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="playControls btn-group">
+          <button id="play" class="btn btn-default"><i class="fa fa-play-circle"></i> Play</button>
+          <button id="stop" class="btn btn-default"><i class="fa fa-stop"></i> Stop</button>
+          <button id="pause" class="btn btn-default"><i class="fa fa-pause"></i> Pause</button>
+          <button id="previous" class="btn btn-default"><i class="fa fa-step-backward"></i> Previous</button>
+          <button id="next" class="btn btn-default"><i class="fa fa-step-forward"></i> Next</button>
         </div>
       </div>
-      <div class="row well">
-        <div class="artistAlbumInfo well col-md-6 ">
-          <h3><span id="artist"></span> - <span id="track"></span></h3>
-          <img src="" id="art" class="albumArt">
-        </div>
-        <div class="col-md-6">
-          <h3 id="album"></h3>
+      <div class="col-md-6">
+        <div id="freq" class="frequency">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="row well">
+    <div class="artistAlbumInfo well col-md-6 ">
+      <h3><span id="artist"></span> - <span id="track"></span></h3>
+      <img src="" id="art" class="albumArt">
+    </div>
+    <div class="col-md-6">
+      <h3 id="album"></h3>
+    </div>
+  </div>
 </div>
 
 </body>

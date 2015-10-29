@@ -1,4 +1,5 @@
-
+// portions of this code and associated html were taken from the open source Rdio hello-web-playback example
+// https://github.com/rdio/hello-web-playback
 
 // a global variable that will hold a reference to the api swf once it has loaded
 var apiswf = null;
@@ -17,7 +18,6 @@ $(document).ready(function() {
   swfobject.embedSWF('http://www.rdio.com/api/swf/', // the location of the Rdio Playback API SWF
       'apiswf', // the ID of the element that will be replaced with the SWF
       1, 1, '9.0.0', 'expressInstall.swf', flashvars, params, attributes);
-
 
   //search box
   $('#search_button').click(function() {
@@ -54,21 +54,17 @@ $(document).ready(function() {
     }
   });
 
-
   // show target artist name
   document.getElementById('target_artist').insertAdjacentHTML('beforeend', JSON.parse(localStorage.getItem('target_artist')) + ': ');
 
-
   // show related artists
-  var artist_data = JSON.parse(localStorage.getItem('related_artists')).related_artists; //XXX Fix this weird nesting
+  var artist_data = JSON.parse(localStorage.getItem('related_artists')).related_artists;
   var artist_names = artist_data.related_artists;
-  console.log(artist_names);
   var artist_images = artist_data.artist_images;
   var radio_keys = artist_data.radio_keys;
   var fragments = artist_data.fragments;
 
   function load_related_artist(index) {
-
       var related_artist = document.createElement("a");
       related_artist.className = "list-group-item";
       var play_button = document.createElement("BUTTON");
@@ -123,7 +119,6 @@ callback_object.ready = function ready(user) {
 callback_object.freeRemainingChanged = function freeRemainingChanged(remaining) {
   $('#remaining').text(remaining);
 }
-
 
 callback_object.playingTrackChanged = function playingTrackChanged(playingTrack, sourcePosition) {
   // The currently playing track has changed.

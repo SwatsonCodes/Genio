@@ -1,4 +1,3 @@
-/* line 6, global.scss */
 .lead {
   height: 125px;
   background-color: #eee;
@@ -10,24 +9,20 @@
   font-size: 40px;
 }
 
-/* line 13, global.scss */
 .playControls {
   margin-top: 30px;
 }
 
-/* line 17, global.scss */
 .artistAlbumInfo {
   text-align: center;
   background-color: #ddd;
 }
 
-/* line 22, global.scss */
 .albumArt {
   border-radius: 50%;
   border: 3px solid #ccc;
 }
 
-/* line 27, global.scss */
 .frequency {
   margin-top: 5px;
   transform: rotate(180deg);
@@ -36,7 +31,7 @@
   -webkit-transform: rotate(180deg);
   /* Opera, Chrome, and Safari */
 }
-/* line 32, global.scss */
+
 .frequency div {
   height: 6px;
   background-color: #ccc;
