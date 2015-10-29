@@ -2,10 +2,12 @@
 
 
 $(document).ready(function() {
+  $("p").hide();
 
   $('#search_button').click(function() {
   var load_icon = document.getElementById('load_animate');
   load_icon.className = "glyphicon glyphicon-refresh glyphicon-refresh-animate";
+  $("p").show();
   var artist = $("#artist_input").val();
     $.ajax({
         type: "get",
