@@ -36,7 +36,7 @@ class Genio:
                     artist_result = cur_artist
                     break
         else:
-            raise Exception("No results found for artist " + artist_name)
+            raise Exception("No results found for artist " + str(artist_name))
         if artist_result is None:
             raise Exception("Could not associate \'%s\' with an artist ID" % artist_name)
         self.artist_name = artist_name
