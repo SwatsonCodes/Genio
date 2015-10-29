@@ -18,7 +18,6 @@ class Genio(Resource):
     def get(self):
         artist = request.args.get('artist')
         related = genio.find_related_artists(artist)
-        print(related)
         return {'related_artists': related}, status.HTTP_200_OK
 
 api.add_resource(Genio, '/genio/', endpoint='genio')

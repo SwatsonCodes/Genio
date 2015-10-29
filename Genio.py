@@ -111,7 +111,7 @@ class Genio:
         songs = self.get_artist_song_ids(artist_id)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncio.wait([self.extract_artists_from_song(song_id) for song_id in songs]))
-        print(self.artist_counts)
+       # print(self.artist_counts)
         related_artists = list(self.artist_counts.keys())
         related_artists.sort(key=lambda artist_name: self.artist_counts[artist_name], reverse=True)
         radio_keys = self.artist_verifier.get_radio_keys()
