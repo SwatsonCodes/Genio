@@ -114,11 +114,6 @@ callback_object.freeRemainingChanged = function freeRemainingChanged(remaining) 
   $('#remaining').text(remaining);
 }
 
-callback_object.playStateChanged = function playStateChanged(playState) {
-  // The playback state has changed.
-  // The state can be: 0 - paused, 1 - playing, 2 - stopped, 3 - buffering or 4 - paused.
-  $('#playState').text(playState);
-}
 
 callback_object.playingTrackChanged = function playingTrackChanged(playingTrack, sourcePosition) {
   // The currently playing track has changed.
@@ -144,11 +139,6 @@ callback_object.muteChanged = function muteChanged(mute) {
   // Mute was changed. mute will either be true (for muting enabled) or false (for muting disabled).
 }
 
-callback_object.positionChanged = function positionChanged(position) {
-  //The position within the track changed to position seconds.
-  // This happens both in response to a seek and during playback.
-  $('#position').text(position);
-}
 
 callback_object.queueChanged = function queueChanged(newQueue) {
   // The queue has changed to newQueue.
