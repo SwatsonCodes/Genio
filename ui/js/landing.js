@@ -15,7 +15,7 @@ $(document).ready(function() {
         success: function(data) {
             if(data.related_artists.related_artists.length == 0){
                 load_icon.className = "glyphicon glyphicon-music";
-                alert("No related artists found on Rdio.");
+                alert("No related artists found on Rdio. Tip: rap artists tend to work best!");
                 return;
             }
             localStorage.setItem('target_artist', JSON.stringify(artist));
@@ -26,7 +26,7 @@ $(document).ready(function() {
             console.log(error);
             load_icon.className = "glyphicon glyphicon-music";
             if(error.status == 500){
-                alert("Could not find artist on Genius.");
+                alert("Could not find artist on Genius. Please make sure you typed the name correctly, or try an alternative spelling (e.g. Kanye West instead of Kanye).");
             }
         }
     });
