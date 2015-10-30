@@ -20,9 +20,13 @@ $(document).ready(function() {
       1, 1, '9.0.0', 'expressInstall.swf', flashvars, params, attributes);
 
   //search box
+  var load_icon = document.getElementById('load_animate');
+  load_icon.className = "glyphicon glyphicon-music";
+
   $('#search_button').click(function() {
   var load_icon = document.getElementById('load_animate');
-  load_icon.className = "glyphicon glyphicon-refresh glyphicon-refresh-animate";
+  load_icon.className = "glyphicon glyphicon-music gly-spin";
+  $("#caveat").show();
   var artist = $("#artist_input").val();
     $.ajax({
         type: "get",
@@ -30,7 +34,7 @@ $(document).ready(function() {
         data: {'artist': artist},
         success: function(data) {
             if(data.related_artists.related_artists.length == 0){
-                load_icon.className = "";
+                load_icon.className = "glyphicon glyphicon-music";
                 alert("No related artists found on Rdio.");
                 return;
             }
@@ -40,7 +44,7 @@ $(document).ready(function() {
         },
         error: function(error) {
             console.log(error);
-            load_icon.className = "";
+            load_icon.className = "glyphicon glyphicon-music";
             if(error.status == 500){
                 alert("Could not find artist on Genius.");
             }
