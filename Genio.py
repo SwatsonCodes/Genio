@@ -7,6 +7,9 @@ from RdioArtistVerifier import RdioArtistVerifier
 class Genio:
 
     def __init__(self):
+        conn = aiohttp.TCPConnector(verify_ssl=False)
+        self.session = aiohttp.ClientSession(connector=conn)
+
         self.genius_base_url = "http://api.genius.com/"
         self.auth_header = {"Authorization": "Bearer heOS7t124GoomESzHUywrt7YhAaYYhI7eVygSoULIOhA0QXzc98jIU5hSascfFvm"}
         self.artist_verifier = RdioArtistVerifier()
@@ -57,7 +60,7 @@ class Genio:
     # Get annotations from a given song and extract artists from each annotation
     def extract_artists_from_song(self, song_id, num_referents=20):
         with (yield from self.semaphore):
-            r = yield from aiohttp.get(self.genius_base_url + 'referents',
+            r = yield from self.session.get(self.genius_base_url + 'referents',
                                         params={'song_id': song_id,
                                        'per_page': num_referents},
                                         headers=self.auth_header)
@@ -83,7 +86,7 @@ class Genio:
             if link[:26] == "http://genius.com/artists/":
                 artist_name = link[26:].replace('-', ' ')
                 if artist_name.lower() != self.artist_name.lower():
-                    in_rdio = artist_name not in self.not_artists and (artist_name in self.artist_counts or await self.artist_verifier.exists_async(artist_name))
+                    in_rdio = artist_name not in self.not_artists and (artist_name in self.artist_counts or await self.artist_verifier.exists_async(self.session, artist_name))
                     if in_rdio:
                         if artist_name in self.artist_counts:
                             self.artist_counts[artist_name] += 1
