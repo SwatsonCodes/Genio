@@ -11,7 +11,7 @@ pip3 install -r requirements.txt
 ```
 from the command line. This will install the required Python libraries. Once that finishes, simply type
 ```
-python run_genio.pu
+python run_genio.py
 ``` 
 to launch the Genio API and UI servers locally. If you have multiple versions of Python installed, don't worry, the script will automatically detect this and run with Python 3. You should see this ouput in the terminal:
 ```
