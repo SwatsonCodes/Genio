@@ -1,6 +1,6 @@
 # Genio
 
-Genio is a webapp that helps you find related musical artists on [Rdio](http://www.rdio.com/) by crawling [Genius](http://genius.com/) (formerly known as RapGenius) lyric annotations for links to other artist pages. Given a artist name, Genio will locate that artist's songs on Genius, find references to other artists within the song lyric annotations, and deliver the top-ranked related artists complete with Rdio playlists and the context in which the artists were mentioned. 
+Genio is a webapp that helps you find related musical artists on [Rdio](http://www.rdio.com/) by crawling [Genius](http://genius.com/) (formerly known as RapGenius) lyric annotations for links to other artist pages. Given an artist name, Genio will locate that artist's songs on Genius, find references to other artists within the song lyric annotations, and deliver the top-ranked related artists complete with Rdio playlists and the context in which the artists were mentioned. 
 
 
 <h3> Running Genio </h3>
